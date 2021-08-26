@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <div id="divAffichage">
+
+    </div>
+
+
+    <!-- Utiliser un API pour récup les données tout ca encapsulé dans un prototype et on doit soit retourner une promesse, soit un callback -->
+
+    <script>
+        // const CallAPI = (function() {
+            
+        // });
+
+        // CallAPI.prototype.init = function(methodeHTPP, url, methodeCallBack) {
+        //     const http = new XMLHttpRequest();
+        //     http.onreadystatechange = function() {
+        //         if (http.readyState == http.DONE && http.status == 200) {
+        //             // Méthode callback
+
+        //         }
+        //     }
+
+        //     http.open(methodeHTTP, url);
+        //     http.send();
+        // }
+
+        const Ajax = (function() {});
+        Ajax.request = function(method, uri) {
+            return new Promise((resolve, reject) => {
+                const http = new XMLHttpRequest();
+                http.onload = function() {
+                    if (http.status == 200 || http.status == 304) {
+                        // Méthode callback
+                        resolve(http.responseText)
+                    } else if (http.status != 200) {
+                        reject(http.responseText);
+                    }
+                }
+
+            http.open(method, uri);
+            http.send();
+            });
+        }
+
+        Ajax.get = function(uri) {
+           return Ajax.request("get", uri);
+        }
+        Ajax.post = function(uri) {
+            return Ajax.request("post", uri);
+        }
+
+        const tabPokemon = [];
+        
+        Ajax.get("https://pokeapi.co/api/v2/pokemon/")
+        .then(data => tabPokemon.push(JSON.parse(data)))
+        .catch(e => console.error(e));
+
+        const div = document.getElementById("divAffichage");
+
+        console.log(tabPokemon);
+
+        for (let i = 0; i < tabPokemon.length; i++) {
+            let newP = document.createElement("p");
+            newP.innerText = tabPokemon[0][i];
+            div.appendChild(newP);
+        }
+
+        console.log(tabPokemon);
+    </script>
+</body>
+</html>

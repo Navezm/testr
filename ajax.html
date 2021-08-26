@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        const http = new XMLHttpRequest();
+        http.onreadystatechange = function() {
+            if (http.readyState == http.DONE && http.status == 200){
+                console.log(http.responseText);
+            }
+        };
+
+        http.open("GET", "https://pokeapi.co/api/v2/");
+        http.send();
+    </script>
+</body>
+</html>
