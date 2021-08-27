@@ -1,0 +1,22 @@
+#container{
+    display: flex;
+    width: 80%;
+    margin: 0 auto;
+}
+
+#divAffichage > p{
+    text-transform: capitalize;
+    flex: 3;
+}
+
+#divDetail {
+    margin-left: 10%;
+}
+
+a{
+    cursor: pointer;
+}
+
+.text-capitalize{
+    text-transform: capitalize;
+}

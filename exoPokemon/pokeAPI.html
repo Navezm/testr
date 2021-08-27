@@ -6,32 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="./ajax.js"></script>
-    <style>
-        #divGlobale{
-            display: flex;
-        }
-
-        #divAffichage > p{
-            text-transform: capitalize;
-            flex: 3;
-        }
-
-        #divDetail {
-            margin-left: 10%;
-        }
-
-        a{
-            cursor: pointer;
-        }
-
-        .text-capitalize{
-            text-transform: capitalize;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="divGlobale">
+    <div id="container">
         <div id="divAffichage">
         
         </div>
@@ -42,13 +21,33 @@
             </div>
             <img src="" alt="">
         </div>
+
     </div>
 
+    <button id="prev">Previous</button>
+    <button id="next">Next</button>
+
     <script>
+        HTMLElement.prototype.hide = function() {
+            this.style.display = "none";
+        }
+
+        HTMLElement.prototype.show = function() {
+            this.style.display = "block";
+        }
+
         const tabPokemon = [];
+        const div = document.getElementById("divAffichage");
+        
+        const prev = document.getElementById("prev");
+        const next = document.getElementById("next");
+        const btn = {
+            prev, next
+        }
+        let nextUrl = null;
+        let prevUrl = null;
 
         function buildList(detail) {
-            const div = document.getElementById("divAffichage");
             let newP = document.createElement("p");
             let newA = document.createElement("a");
             newA.setAttribute("id", detail.url);
@@ -58,24 +57,54 @@
             div.append(newP);
         }
         
-        Ajax.get("https://pokeapi.co/api/v2/pokemon/")
-        .then((data) => {
-            tabPokemon.push(JSON.parse(data));
+        function getPokeList(uri) {
+            Ajax.get(uri)
+            .then((data) => {
+                
+                div.innerText = "";
+                const {results, next, previous} = JSON.parse(data);
 
-            for (let i = 0; i < tabPokemon[0].results.length; i++) {
-                buildList(tabPokemon[0].results[i]);
-            }
+                nextUrl = next;
+                prevUrl = previous;
 
-            const pokemons = document.querySelectorAll(".linkPokemon");
+                if (!nextUrl) {
+                    btn.next.hide();
+                } else {
+                    btn.next.show();
+                }
+                 if (!prevUrl) {
+                    btn.prev.hide();
+                } else {
+                    btn.prev.show();
+                }
 
-            for (let i = 0; i < pokemons.length; i++) {
-                pokemons[i].addEventListener("click", function(event){
-                    getPokemon(event.originalTarget.id).then(data => buildDetails(data))
-                    // buildDetails(await getPokemon(event.originalTarget.id));
-                })
-            }
-        })
-        .catch(e => console.error(e));
+                for (let i = 0; i < results.length; i++) {
+                    buildList(results[i]);
+                }
+
+                const pokemons = document.querySelectorAll(".linkPokemon");
+
+                for (let i = 0; i < pokemons.length; i++) {
+                    pokemons[i].addEventListener("click", function(event){
+                        getPokemon(event.originalTarget.id).then(data => buildDetails(data))
+                        // buildDetails(await getPokemon(event.originalTarget.id));
+                    })
+                }
+            })
+            .catch(e => console.error(e));
+        } 
+
+        getPokeList("https://pokeapi.co/api/v2/pokemon/");
+
+        // Event listener changes List
+        next.addEventListener("click", function(){
+            getPokeList(nextUrl);
+        });
+
+        prev.addEventListener("click", function(){
+            getPokeList(prevUrl);
+        });
+
 
         async function getPokemon(uri) {
             const data = await Ajax.get(uri);
@@ -123,7 +152,6 @@
             // Image
             let img = document.querySelector("img");
             img.setAttribute("src", pokemon.sprites.front_default);
-
         
             divDetails.append(h1, divAttributes, divTypes, divSkills);
         }
