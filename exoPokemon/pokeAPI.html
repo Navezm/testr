@@ -82,6 +82,23 @@
             return JSON.parse(data);
         }
 
+        function buildArray(array, title, fct) {
+            let div = document.createElement("div");
+            let h4 = document.createElement("h4");
+            h4.innerText = title;
+
+            let ul = document.createElement("ul");
+
+            for (let item of array) {
+                let li = document.createElement("li");
+                li.innerText = fct(item);
+                li.classList.add("text-capitalize");
+                ul.append(li);
+            }
+            div.append(h4, ul);
+            return div;
+        }
+
         function buildDetails(pokemon) {
             const divDetails = document.querySelector("#detailsPokemon");
 
@@ -95,39 +112,20 @@
             h1.innerText = pokemon.name;
 
             // Attributes
-            let divAttributes = document.createElement("div");
-            let h4Atributes = document.createElement("h4");
-            h4Atributes.innerText = "Attributes :";
-            let ulAttributes = document.createElement("ul");
-            
-            for (let i = 0; i < pokemon.abilities.length; i++) {
-                let li = document.createElement("li");
-                li.innerText = pokemon.abilities[i].ability.name;
-                li.classList.add("text-capitalize");
-                ulAttributes.append(li);
-            }
-            divAttributes.append(h4Atributes, ulAttributes);
+            let divAttributes = buildArray(pokemon.abilities, "Attributes :", (item) => item.ability.name)
 
             // Types
-            let divTypes = document.createElement("div");
-            let h4Type = document.createElement("h4");
-            h4Type.innerText = "Types :";
+            let divTypes = buildArray(pokemon.types, "Types: ", (item) => item.type.name);
 
-            let ulType = document.createElement("ul");
-
-            for (let i = 0; i < pokemon.types.length; i++) {
-                let li = document.createElement("li");
-                li.innerText = pokemon.types[i].type.name;
-                li.classList.add("text-capitalize");
-                ulType.append(li);
-            }
-            divTypes.append(h4Type, ulType);
-
+            // Skills
+            let divSkills = buildArray(pokemon.moves.slice(0,4), "Skills: ", (item) => item.move.name);
+            
             // Image
             let img = document.querySelector("img");
             img.setAttribute("src", pokemon.sprites.front_default);
 
-            divDetails.append(h1, divAttributes, divTypes);
+        
+            divDetails.append(h1, divAttributes, divTypes, divSkills);
         }
         
     </script>
