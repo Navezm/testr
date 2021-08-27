@@ -41,3 +41,5 @@ axios.get = function(uri) {
 axios.post = function(uri) {
     return axios.request("POST", uri);
 }
+
+export default axios;

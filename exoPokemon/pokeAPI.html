@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./ajax.js"></script>
+    <style>
+        #divGlobale{
+            display: flex;
+        }
+
+        #divAffichage > p{
+            text-transform: capitalize;
+            flex: 3;
+        }
+
+        #divDetail {
+            margin-left: 10%;
+        }
+
+        a{
+            cursor: pointer;
+        }
+
+        .text-capitalize{
+            text-transform: capitalize;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="divGlobale">
+        <div id="divAffichage">
+        
+        </div>
+    
+        <div id="divDetail">
+            <div id="detailsPokemon">
+            
+            </div>
+            <img src="" alt="">
+        </div>
+    </div>
+
+    <script>
+        const tabPokemon = [];
+
+        function buildList(detail) {
+            const div = document.getElementById("divAffichage");
+            let newP = document.createElement("p");
+            let newA = document.createElement("a");
+            newA.setAttribute("id", detail.url);
+            newA.setAttribute("class", "linkPokemon")
+            newA.innerText = detail.name;
+            newP.append(newA);
+            div.append(newP);
+        }
+        
+        Ajax.get("https://pokeapi.co/api/v2/pokemon/")
+        .then((data) => {
+            tabPokemon.push(JSON.parse(data));
+
+            for (let i = 0; i < tabPokemon[0].results.length; i++) {
+                buildList(tabPokemon[0].results[i]);
+            }
+
+            const pokemons = document.querySelectorAll(".linkPokemon");
+
+            for (let i = 0; i < pokemons.length; i++) {
+                pokemons[i].addEventListener("click", function(event){
+                    getPokemon(event.originalTarget.id).then(data => buildDetails(data))
+                    // buildDetails(await getPokemon(event.originalTarget.id));
+                })
+            }
+        })
+        .catch(e => console.error(e));
+
+        async function getPokemon(uri) {
+            const data = await Ajax.get(uri);
+            return JSON.parse(data);
+        }
+
+        function buildDetails(pokemon) {
+            const divDetails = document.querySelector("#detailsPokemon");
+
+            // Remove all infos existing
+            while (divDetails.firstChild) {
+                divDetails.removeChild(divDetails.lastChild);
+            }
+
+            let h1 = document.createElement("h1");
+            h1.classList.add("text-capitalize");
+            h1.innerText = pokemon.name;
+
+            // Attributes
+            let divAttributes = document.createElement("div");
+            let h4Atributes = document.createElement("h4");
+            h4Atributes.innerText = "Attributes :";
+            let ulAttributes = document.createElement("ul");
+            
+            for (let i = 0; i < pokemon.abilities.length; i++) {
+                let li = document.createElement("li");
+                li.innerText = pokemon.abilities[i].ability.name;
+                li.classList.add("text-capitalize");
+                ulAttributes.append(li);
+            }
+            divAttributes.append(h4Atributes, ulAttributes);
+
+            // Types
+            let divTypes = document.createElement("div");
+            let h4Type = document.createElement("h4");
+            h4Type.innerText = "Types :";
+
+            let ulType = document.createElement("ul");
+
+            for (let i = 0; i < pokemon.types.length; i++) {
+                let li = document.createElement("li");
+                li.innerText = pokemon.types[i].type.name;
+                li.classList.add("text-capitalize");
+                ulType.append(li);
+            }
+            divTypes.append(h4Type, ulType);
+
+            // Image
+            let img = document.querySelector("img");
+            img.setAttribute("src", pokemon.sprites.front_default);
+
+            divDetails.append(h1, divAttributes, divTypes);
+        }
+        
+    </script>
+</body>
+</html>
