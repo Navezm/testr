@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./scripts/axios.js"></script>
+</head>
+<body>
+    
+    <div class="list">
+        <ul></ul>
+    </div>
+    <script>
+
+        /**
+         * @param {any} pokemon
+         * @param {HTMLUListElement} list
+         * */
+        function generateItem(pokemon, list) {
+            const li = document.createElement("li");
+            li.innerText = pokemon.name;
+
+            list.append(li);
+        }
+        //callback
+        // axios.get(
+        //     "https://pokeapi.co/api/v2/pokemon",
+        //     (data) => console.log(data),
+        //     (error) => console.log(error)
+        // );
+
+        //promise simple
+        // axios.get("https://pokeapi.co/api/v2/pokemon")
+        //     .then(data => console.log(data))
+        //     .catch(err => console.error(err));
+
+        const list = document.querySelector(".list > ul");
+
+        async function apiCall() {
+            const data = await axios.get("https://pokeapi.co/api/v2/pokemon");
+            console.log(data);
+            for(let pokemon of data.results) {
+                generateItem(pokemon, list);
+            }
+        }
+
+        apiCall();
+    </script>
+</body>
+</html>

@@ -9,7 +9,7 @@
 <body>
 
     <div id="divAffichage">
-
+        <ul></ul>
     </div>
 
 
@@ -58,23 +58,39 @@
             return Ajax.request("post", uri);
         }
 
+        /** 
+         * @param {any} pokemon
+         * @param {HTMLListElement} list
+         **/
+        function generateItem(pokemon, list) {
+            const li = document.createElement("li");
+            li.innerText = pokemon.name;
+
+            list.append(li);
+        }
+
+        const list = document.querySelector(".list>ul");
+
         const tabPokemon = [];
         
         Ajax.get("https://pokeapi.co/api/v2/pokemon/")
-        .then(data => tabPokemon.push(JSON.parse(data)))
+        .then(data => {
+            tabPokemon.push(JSON.parse(data));
+            const div = document.getElementById("divAffichage");
+
+            console.log(tabPokemon[0].results[2]);
+
+            for (let i = 0; i < tabPokemon[0].results.length; i++) {
+                let newP = document.createElement("p");
+                newP.innerText = tabPokemon[0].results[i].name;
+                div.appendChild(newP);
+            }
+
+            console.log(tabPokemon);
+        })
         .catch(e => console.error(e));
 
-        const div = document.getElementById("divAffichage");
-
-        console.log(tabPokemon);
-
-        for (let i = 0; i < tabPokemon.length; i++) {
-            let newP = document.createElement("p");
-            newP.innerText = tabPokemon[0][i];
-            div.appendChild(newP);
-        }
-
-        console.log(tabPokemon);
+        
     </script>
 </body>
 </html>
